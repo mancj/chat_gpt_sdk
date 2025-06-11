@@ -124,6 +124,8 @@ class ChatCompleteText {
   /// [maxToken]
   final int? maxToken;
 
+  final int? maxCompletionToken;
+
   ///Number between -2.0 and 2.0. Positive values penalize new tokens based on
   /// whether they appear in the text so far, increasing the model's likelihood
   /// to talk about new topics. [presencePenalty]
@@ -181,7 +183,7 @@ class ChatCompleteText {
     this.n = 1,
     this.stream = false,
     this.stop,
-    this.maxToken = 100,
+    this.maxToken,
     this.presencePenalty = .0,
     this.frequencyPenalty = .0,
     this.user = "",
@@ -208,6 +210,7 @@ class ChatCompleteText {
       "stream": stream,
       "stop": stop,
       "max_tokens": maxToken,
+      "max_completion_tokens": maxCompletionToken,
       "presence_penalty": presencePenalty,
       "frequency_penalty": frequencyPenalty,
       "user": user,
