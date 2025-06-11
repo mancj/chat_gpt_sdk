@@ -184,6 +184,7 @@ class ChatCompleteText {
     this.stream = false,
     this.stop,
     this.maxToken,
+    this.maxCompletionToken,
     this.presencePenalty = .0,
     this.frequencyPenalty = .0,
     this.user = "",
