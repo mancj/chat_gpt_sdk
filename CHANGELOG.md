@@ -245,3 +245,21 @@
 ## 3.1.0
  - Add Gpt 4o mini
  - Add Doc API version 2 (Assistants v2)
+
+## 3.1.1
+  - Update sdk
+
+## 3.1.2
+  - Update sdk
+  - remove path provider
+
+## 3.1.3
+  - Implement support for streaming responses from OpenAI on web platform
+  - Merge Code from contributors
+  - Added json_schema support to ResponseFormat
+
+# 3.1.4
+  - Added support for image data i.e, type (image_file, image_url) in content v2
+
+## 3.1.5
+ - add instructions in SpeechRequest

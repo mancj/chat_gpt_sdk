@@ -35,6 +35,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   ///setup openai sdk
   void initOpenAISDK() {
     Future.delayed(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
       BlocProvider.of<OpenAIBloc>(context, listen: false).initOpenAISdk();
     });
   }
@@ -227,11 +228,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           Container(
               padding: const EdgeInsets.all(kDefaultPadding / 1.5),
               decoration: BoxDecoration(
-                  color: kButtonColor.withOpacity(.32),
+                  color: kButtonColor.withValues(alpha: .32),
                   borderRadius: BorderRadius.circular(kDefaultPadding / 3),
                   boxShadow: [
                     BoxShadow(
-                        color: kButtonColor.withOpacity(.1),
+                        color: kButtonColor.withValues(alpha: .1),
                         offset: const Offset(0, 3),
                         blurRadius: 6.0)
                   ]),
@@ -261,11 +262,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               margin: const EdgeInsets.only(right: kDefaultPadding / 2),
               padding: const EdgeInsets.all(kDefaultPadding / 1.5),
               decoration: BoxDecoration(
-                  color: kButtonColor.withOpacity(.32),
+                  color: kButtonColor.withValues(alpha: .32),
                   borderRadius: BorderRadius.circular(kDefaultPadding / 3),
                   boxShadow: [
                     BoxShadow(
-                        color: kButtonColor.withOpacity(.1),
+                        color: kButtonColor.withValues(alpha: .1),
                         offset: const Offset(0, 3),
                         blurRadius: 6.0)
                   ]),
@@ -330,11 +331,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               margin: const EdgeInsets.only(right: kDefaultPadding / 2),
               padding: const EdgeInsets.all(kDefaultPadding / 1.5),
               decoration: BoxDecoration(
-                  color: kButtonColor.withOpacity(.32),
+                  color: kButtonColor.withValues(alpha: .32),
                   borderRadius: BorderRadius.circular(kDefaultPadding / 3),
                   boxShadow: [
                     BoxShadow(
-                        color: kButtonColor.withOpacity(.1),
+                        color: kButtonColor.withValues(alpha: .1),
                         offset: const Offset(0, 3),
                         blurRadius: 6.0)
                   ]),
@@ -427,7 +428,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                         title: 'Stop',
                         boxShadow: [
                           BoxShadow(
-                              color: kButtonColor.withOpacity(.23),
+                              color: kButtonColor.withValues(alpha: .23),
                               offset: const Offset(0.0, 6),
                               blurRadius: 5.0)
                         ],
@@ -472,12 +473,12 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     margin: const EdgeInsets.symmetric(
                         vertical: kDefaultPadding / 4),
                     decoration: BoxDecoration(
-                        color: kButtonColor.withOpacity(.32),
+                        color: kButtonColor.withValues(alpha: .32),
                         borderRadius:
                             BorderRadius.circular(kDefaultPadding / 2),
                         boxShadow: [
                           BoxShadow(
-                              color: kButtonColor.withOpacity(.1),
+                              color: kButtonColor.withValues(alpha: .1),
                               offset: const Offset(0, 3),
                               blurRadius: 6.0)
                         ]),
@@ -512,11 +513,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           width: size.width * .08,
           height: size.height * .044,
           decoration: BoxDecoration(
-              color: kButtonColor.withOpacity(.32),
+              color: kButtonColor.withValues(alpha: .32),
               borderRadius: BorderRadius.circular(kDefaultPadding / 2),
               boxShadow: [
                 BoxShadow(
-                    color: kButtonColor.withOpacity(.1),
+                    color: kButtonColor.withValues(alpha: .1),
                     offset: const Offset(0, 3),
                     blurRadius: 6.0)
               ]),
@@ -541,11 +542,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
             width: size.width * .09,
             height: size.height * .044,
             decoration: BoxDecoration(
-                color: kButtonColor.withOpacity(.32),
+                color: kButtonColor.withValues(alpha: .32),
                 borderRadius: BorderRadius.circular(kDefaultPadding / 2),
                 boxShadow: [
                   BoxShadow(
-                      color: kButtonColor.withOpacity(.1),
+                      color: kButtonColor.withValues(alpha: .1),
                       offset: const Offset(0, 3),
                       blurRadius: 6.0)
                 ]),
