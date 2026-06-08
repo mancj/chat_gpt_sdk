@@ -11,7 +11,6 @@ class CompleteText {
   final double topP;
   final double frequencyPenalty;
   final double presencePenalty;
-  final String? assistantId;
 
   /// ### example use it
   /// - ["You:"]
@@ -30,33 +29,29 @@ class CompleteText {
     this.frequencyPenalty = .0,
     this.presencePenalty = .0,
     this.stop,
-    this.assistantId,
   });
 
   factory CompleteText.fromJson(Map<String, dynamic> json) => CompleteText(
-        prompt: json['prompt'] as String,
-        model: ModelFromValue(
-          model: json['model'].toString(),
-        ),
-        //json['model'] as String,
+        prompt: json['prompt'] as String? ?? '',
+        model: ModelFromValue(model: json['model']?.toString() ?? ''),
         temperature: (json['temperature'] as num?)?.toDouble() ?? .3,
         maxTokens: json['max_tokens'] as int? ?? 100,
         topP: (json['top_p'] as num?)?.toDouble() ?? 1.0,
         frequencyPenalty: (json['frequency_penalty'] as num?)?.toDouble() ?? .0,
         presencePenalty: (json['presence_penalty'] as num?)?.toDouble() ?? .0,
-        stop: (json['stop'] as List<String>?),
-        assistantId: (json['assistant_id'] as String?),
+        stop: json['stop'] == null
+            ? null
+            : (json['stop'] as List? ?? []).map((e) => e.toString()).toList(),
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'prompt': prompt,
-        'model': model.model,
-        'temperature': temperature,
-        'max_tokens': maxTokens,
-        'top_p': topP,
-        'frequency_penalty': frequencyPenalty,
-        'presence_penalty': presencePenalty,
-        "stop": stop,
-        'assistant_id': assistantId,
-      };
+    'prompt': prompt,
+    'model': model.model,
+    'temperature': temperature,
+    'max_tokens': maxTokens,
+    'top_p': topP,
+    'frequency_penalty': frequencyPenalty,
+    'presence_penalty': presencePenalty,
+    "stop": stop,
+  };
 }

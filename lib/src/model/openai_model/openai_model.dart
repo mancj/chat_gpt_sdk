@@ -5,15 +5,16 @@ class OpenAiModel {
   final String object;
 
   OpenAiModel(this.data, this.object);
+
   factory OpenAiModel.fromJson(Map<String, dynamic> json) => OpenAiModel(
-        (json['data'] as List<Map>)
-            .map((e) => ModelData.fromJson(e as Map<String, dynamic>))
+        (json['data'] as List? ?? [])
+            .map((e) => ModelData.fromJson(Map<String, dynamic>.from(e)))
             .toList(),
-        json['object'],
+        json['object'] as String? ?? '',
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'data': data,
-        'object': object,
-      };
+    'data': data,
+    'object': object,
+  };
 }

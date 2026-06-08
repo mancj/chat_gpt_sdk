@@ -11,22 +11,25 @@ class ThreadResponse {
   int createdAt;
   String id;
   String object;
-  Map<String, double>? toolResources;
+  Map<String, dynamic>? toolResources;
 
   factory ThreadResponse.fromJson(Map<String, dynamic> json) => ThreadResponse(
-      metadata: json["metadata"] ?? {},
-      createdAt: json["created_at"] ?? 0,
-      id: json["id"] ?? '',
-      object: json["object"] ?? '',
-      toolResources: json['tool_resources'] is Map<String, double>
-          ? json['tool_resources']
-          : null);
+        metadata: json["metadata"] == null
+            ? {}
+            : Map<String, dynamic>.from(json["metadata"]),
+        createdAt: json["created_at"] as int? ?? 0,
+        id: json["id"] as String? ?? '',
+        object: json["object"] as String? ?? '',
+        toolResources: json['tool_resources'] == null
+            ? null
+            : Map<String, dynamic>.from(json['tool_resources']),
+      );
 
   Map<String, dynamic> toJson() => {
-        "metadata": metadata,
-        "created_at": createdAt,
-        "id": id,
-        "object": object,
-        'tool_resources': toolResources,
-      };
+    "metadata": metadata,
+    "created_at": createdAt,
+    "id": id,
+    "object": object,
+    'tool_resources': toolResources,
+  };
 }

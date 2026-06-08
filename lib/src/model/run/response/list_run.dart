@@ -16,22 +16,23 @@ class ListRun {
   String object;
 
   factory ListRun.fromJson(Map<String, dynamic> json) => ListRun(
-        firstId: json["first_id"] ?? '',
+        firstId: json["first_id"] as String? ?? '',
         data: json["data"] == null
             ? []
             : List<CreateRunResponse>.from(
-                json["data"].map((x) => CreateRunResponse.fromJson(x)),
+                (json["data"] as List? ?? [])
+                    .map((x) => CreateRunResponse.fromJson(Map<String, dynamic>.from(x))),
               ),
-        lastId: json["last_id"] ?? '',
-        hasMore: json["has_more"],
-        object: json["object"],
+        lastId: json["last_id"] as String? ?? '',
+        hasMore: json["has_more"] as bool? ?? false,
+        object: json["object"] as String? ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "first_id": firstId,
-        "data": data.map((x) => x.toJson()).toList(),
-        "last_id": lastId,
-        "has_more": hasMore,
-        "object": object,
-      };
+    "first_id": firstId,
+    "data": data.map((x) => x.toJson()).toList(),
+    "last_id": lastId,
+    "has_more": hasMore,
+    "object": object,
+  };
 }

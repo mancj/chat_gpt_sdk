@@ -30,17 +30,20 @@ class OpenAIBloc extends Cubit<OpenAIState> {
   ///[getTxtToken]
   TextEditingController getTxtToken() => _txtToken;
 
-  void onSetToken(
-      {required Function() success, required Function() error}) async {
+  void onSetToken({
+    required Function() success,
+    required Function() error,
+  }) async {
     if (getToken() == "") {
       error();
     } else {
       saveToken(
-          success: () {
-            _openAI.setToken(getToken());
-            success();
-          },
-          error: error);
+        success: () {
+          _openAI.setToken(getToken());
+          success();
+        },
+        error: error,
+      );
     }
   }
 
@@ -54,8 +57,10 @@ class OpenAIBloc extends Cubit<OpenAIState> {
 
   ///save token
   ///[saveToken]
-  void saveToken(
-      {required Function() success, required Function() error}) async {
+  void saveToken({
+    required Function() success,
+    required Function() error,
+  }) async {
     if (_txtToken.value.text == "") {
       error();
       await _shared.setString(SharedRefKey.kAccessToken, "");
@@ -110,20 +115,22 @@ class OpenAIBloc extends Cubit<OpenAIState> {
 
   ///messages of chat
   List<Message> list = [];
+
   void sendWithPrompt() async {
     ///update user chat message
     list.add(Message(isBot: false, message: getTextInput().value.text));
-    emit(ChatCompletionState(
-        isBot: false, messages: list, showStopButton: true));
+    emit(
+      ChatCompletionState(isBot: false, messages: list, showStopButton: true),
+    );
 
     ///start send request
     final request = ChatCompleteText(
-        model: _getVersion() ? Gpt4ChatModel() : GptTurboChatModel(),
-        messages: [
-          Messages(role: Role.user, content: getTextInput().value.text)
-              .toJson(),
-        ],
-        maxToken: 400);
+      model: _getVersion() ? Gpt4OChatModel() : Gpt4oMiniChatModel(),
+      messages: [
+        Messages(role: Role.user, content: getTextInput().value.text).toJson(),
+      ],
+      maxToken: 400,
+    );
 
     ///clear text
     getTextInput().text = "";
@@ -131,38 +138,57 @@ class OpenAIBloc extends Cubit<OpenAIState> {
     _openAI
         .onChatCompletionSSE(request: request, onCancel: onCancel)
         .transform(StreamTransformer.fromHandlers(handleError: handleError))
-        .listen((it) {
-      Message? message;
-      list.removeWhere((element) {
-        if (element.id == '${it.id}') {
-          message = element;
-          return true;
-        }
-        return false;
-      });
+        .listen(
+          (it) {
+            Message? message;
+            list.removeWhere((element) {
+              if (element.id == '${it.id}') {
+                message = element;
+                return true;
+              }
+              return false;
+            });
 
-      ///+= message
-      String msg =
-          '${message?.message ?? ""}${it.choices.last.message?.content ?? ""}';
-      list.add(Message(isBot: true, id: '${it.id}', message: msg));
-      emit(ChatCompletionState(
-          isBot: true, messages: list, showStopButton: true));
-    }, onDone: () {
-      emit(ChatCompletionState(
-          isBot: true, messages: list, showStopButton: false));
-    });
+            ///+= message
+            String msg =
+                '${message?.message ?? ""}${it.choices.last.message?.content ?? ""}';
+            list.add(Message(isBot: true, id: '${it.id}', message: msg));
+            emit(
+              ChatCompletionState(
+                isBot: true,
+                messages: list,
+                showStopButton: true,
+              ),
+            );
+          },
+          onDone: () {
+            emit(
+              ChatCompletionState(
+                isBot: true,
+                messages: list,
+                showStopButton: false,
+              ),
+            );
+          },
+        );
   }
 
   ///generate image with prompt
   ///[generateImage]
   void generateImage() async {
-    final request = GenerateImage(_txtInput.value.text, 1,
-        model: DallE3(), size: ImageSize.size1024, responseFormat: Format.url);
+    final request = GenerateImage(
+      _txtInput.value.text,
+      1,
+      model: DallE3(),
+      size: ImageSize.size1024,
+      responseFormat: Format.url,
+    );
 
     ///update user chat message
     list.add(Message(isBot: false, message: getTextInput().value.text));
-    emit(ChatCompletionState(
-        isBot: false, messages: list, showStopButton: true));
+    emit(
+      ChatCompletionState(isBot: false, messages: list, showStopButton: true),
+    );
 
     ///clear text
     _txtInput.text = "";
@@ -172,11 +198,15 @@ class OpenAIBloc extends Cubit<OpenAIState> {
       final response = await _openAI.generateImage(request, onCancel: onCancel);
 
       ///add new message
-      list.add(Message(
+      list.add(
+        Message(
           isBot: true,
-          message: response?.data != [] ? response?.data?.last?.url : ""));
-      emit(ChatCompletionState(
-          isBot: true, messages: list, showStopButton: false));
+          message: response?.data != [] ? response?.data?.last?.url : "",
+        ),
+      );
+      emit(
+        ChatCompletionState(isBot: true, messages: list, showStopButton: false),
+      );
     } on OpenAIAuthError catch (_) {
       ///return state auth error
       emit(AuthErrorState());
@@ -198,44 +228,59 @@ class OpenAIBloc extends Cubit<OpenAIState> {
   void textDavinci() async {
     ///update user chat message
     list.add(Message(isBot: false, message: getTextInput().value.text));
-    emit(ChatCompletionState(
-        isBot: false, messages: list, showStopButton: true));
+    emit(
+      ChatCompletionState(isBot: false, messages: list, showStopButton: true),
+    );
 
     ///setup request body
-    final request = CompleteText(
-        prompt: _txtInput.value.text,
-        maxTokens: 400,
-        model: Gpt3TurboInstruct());
+    final request = ChatCompleteText(
+      model: Gpt4oMiniChatModel(),
+      messages: [
+        Messages(role: Role.user, content: getTextInput().value.text).toJson(),
+      ],
+      maxToken: 400,
+    );
 
     ///clear text
-    _txtInput.text = "";
+    getTextInput().text = "";
 
     ///send request
     _openAI
-        .onCompletionSSE(request: request, onCancel: onCancel)
+        .onChatCompletionSSE(request: request, onCancel: onCancel)
         .transform(StreamTransformer.fromHandlers(handleError: handleError))
-        .listen((it) {
-      ///new message object
-      Message? message;
-      for (final m in list) {
-        if (m.id == it.id) {
-          message = m;
-          list.remove(m);
-          break;
-        }
-      }
+        .listen(
+          (it) {
+            Message? message;
+            list.removeWhere((element) {
+              if (element.id == '${it.id}') {
+                message = element;
+                return true;
+              }
+              return false;
+            });
 
-      ///+= message
-      message?.message = '${message.message ?? ""}${it.choices.last.text}';
-
-      ///add new message
-      list.add(Message(isBot: true, message: message?.message, id: it.id));
-      emit(ChatCompletionState(
-          isBot: true, messages: list, showStopButton: true));
-    }, onDone: () {
-      emit(ChatCompletionState(
-          isBot: true, messages: list, showStopButton: false));
-    });
+            ///+= message
+            String msg =
+                '${message?.message ?? ""}${it.choices.last.message?.content ?? ""}';
+            list.add(Message(isBot: true, id: '${it.id}', message: msg));
+            emit(
+              ChatCompletionState(
+                isBot: true,
+                messages: list,
+                showStopButton: true,
+              ),
+            );
+          },
+          onDone: () {
+            emit(
+              ChatCompletionState(
+                isBot: true,
+                messages: list,
+                showStopButton: false,
+              ),
+            );
+          },
+        );
   }
 
   void clearMessage() {
@@ -243,13 +288,15 @@ class OpenAIBloc extends Cubit<OpenAIState> {
   }
 
   CancelData? mCancel;
+
   void onCancel(CancelData cancelData) {
     mCancel = cancelData;
   }
 
   void handleError(Object error, StackTrace t, EventSink<dynamic> eventSink) {
-    emit(ChatCompletionState(
-        isBot: true, messages: list, showStopButton: false));
+    emit(
+      ChatCompletionState(isBot: true, messages: list, showStopButton: false),
+    );
     if (error is OpenAIAuthError) {
       emit(AuthErrorState());
     }
@@ -262,8 +309,9 @@ class OpenAIBloc extends Cubit<OpenAIState> {
   }
 
   void onStopGenerate() {
-    emit(ChatCompletionState(
-        isBot: true, messages: list, showStopButton: false));
+    emit(
+      ChatCompletionState(isBot: true, messages: list, showStopButton: false),
+    );
     mCancel?.cancelToken.cancel("canceled ");
   }
 
@@ -284,15 +332,19 @@ class OpenAIBloc extends Cubit<OpenAIState> {
 
   /// text controller
   final _txtInput = TextEditingController();
+
   TextEditingController getTextInput() => _txtInput;
+
   void closeTextInput() {
     getTextInput().clear();
   }
 
   void closeOpenAIError() => emit(CloseOpenAIErrorUI());
 
-  void isFirstSetting(
-      {required Function() success, required Function() error}) {
+  void isFirstSetting({
+    required Function() success,
+    required Function() error,
+  }) {
     if (_shared.getBool(SharedRefKey.kIsFistSetting) == true) {
       success();
     } else {
@@ -302,9 +354,11 @@ class OpenAIBloc extends Cubit<OpenAIState> {
   }
 
   ///download image from bot chat
-  void downloadImage(String url,
-      {required Function() success,
-      required Function(String message) error}) async {
+  void downloadImage(
+    String url, {
+    required Function() success,
+    required Function(String message) error,
+  }) async {
     try {
       final response = await get(Uri.parse(url));
 

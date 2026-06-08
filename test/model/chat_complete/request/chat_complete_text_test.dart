@@ -30,11 +30,7 @@ void main() {
       final expectedMap = {
         'model': 'gpt-3.5-turbo-0613',
         'messages': [
-          {
-            'role': 'user',
-            'content': 'Hello',
-            'name': 'function_name',
-          },
+          {'role': 'user', 'content': 'Hello', 'name': 'function_name'},
         ],
         'temperature': 0.5,
         'top_p': 0.9,
@@ -78,11 +74,7 @@ void main() {
       final expectedJson = {
         'model': 'gpt-3.5-turbo-0613',
         'messages': [
-          {
-            'role': 'user',
-            'content': 'Hello',
-            'name': 'function_name',
-          },
+          {'role': 'user', 'content': 'Hello', 'name': 'function_name'},
           {
             'role': 'assistant',
             'content': 'Hi, how can I assist you today?',
@@ -102,6 +94,124 @@ void main() {
         'frequency_penalty': 0.0,
         'user': '',
         'logprobs': false,
+      };
+
+      expect(chatCompleteText.toJson(), expectedJson);
+    });
+
+    test('toJson() with reasoning effort and max completion tokens', () {
+      final chatCompleteText = ChatCompleteText(
+        model: O3MiniChatModel(),
+        messages: [
+          Messages(
+            role: Role.user,
+            content: 'Write a quicksort algorithm in Dart',
+          ).toJsonFunctionStruct(),
+        ],
+        temperature: 1.0,
+        maxToken: null,
+        reasoningEffort: 'medium',
+        maxCompletionTokens: 2000,
+      );
+
+      final expectedJson = {
+        'model': 'o3-mini',
+        'messages': [
+          {'role': 'user', 'content': 'Write a quicksort algorithm in Dart'},
+        ],
+        'temperature': 1.0,
+        'top_p': 1.0,
+        'n': 1,
+        'stream': false,
+        'presence_penalty': 0.0,
+        'frequency_penalty': 0.0,
+        'user': '',
+        'logprobs': false,
+        'reasoning_effort': 'medium',
+        'max_completion_tokens': 2000,
+      };
+
+      expect(chatCompleteText.toJson(), expectedJson);
+    });
+
+    test(
+      'toJson() with modern OpenAI features (developer/tool roles, store, metadata, parallelToolCalls, streamOptions)',
+      () {
+        final chatCompleteText = ChatCompleteText(
+          model: Gpt4OChatModel(),
+          messages: [
+            Messages(
+              role: Role.developer,
+              content: 'You are a helpful assistant.',
+            ).toJson(),
+            Messages(
+              role: Role.tool,
+              content: 'Tool response content',
+              name: 'get_weather_tool',
+            ).toJsonFunctionStruct(),
+          ],
+          parallelToolCalls: false,
+          store: true,
+          maxToken: null,
+          metadata: {'customer_id': '12345', 'env': 'production'},
+          stream: true,
+          streamOptions: {'include_usage': true},
+        );
+
+        final expectedJson = {
+          'model': 'gpt-4o',
+          'messages': [
+            {'role': 'developer', 'content': 'You are a helpful assistant.'},
+            {
+              'role': 'tool',
+              'content': 'Tool response content',
+              'name': 'get_weather_tool',
+            },
+          ],
+          'temperature': 0.3,
+          'top_p': 1.0,
+          'n': 1,
+          'stream': true,
+          'presence_penalty': 0.0,
+          'frequency_penalty': 0.0,
+          'user': '',
+          'logprobs': false,
+          'parallel_tool_calls': false,
+          'store': true,
+          'metadata': {'customer_id': '12345', 'env': 'production'},
+          'stream_options': {'include_usage': true},
+        };
+
+        expect(chatCompleteText.toJson(), expectedJson);
+      },
+    );
+
+    test('toJson() with audio modalities and ChatAudioConfig', () {
+      final chatCompleteText = ChatCompleteText(
+        model: Gpt4OChatModel(),
+        messages: [
+          Messages(role: Role.user, content: 'Hello, speak to me!').toJson(),
+        ],
+        modalities: ['text', 'audio'],
+        audio: ChatAudioConfig(voice: 'alloy', format: 'wav'),
+      );
+
+      final expectedJson = {
+        'model': 'gpt-4o',
+        'messages': [
+          {'role': 'user', 'content': 'Hello, speak to me!'},
+        ],
+        'temperature': 0.3,
+        'top_p': 1.0,
+        'n': 1,
+        'stream': false,
+        'max_tokens': 100,
+        'presence_penalty': 0.0,
+        'frequency_penalty': 0.0,
+        'user': '',
+        'logprobs': false,
+        'modalities': ['text', 'audio'],
+        'audio': {'voice': 'alloy', 'format': 'wav'},
       };
 
       expect(chatCompleteText.toJson(), expectedJson);

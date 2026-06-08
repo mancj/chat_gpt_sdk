@@ -13,16 +13,16 @@ class ListMessageFileData {
 
   factory ListMessageFileData.fromJson(Map<String, dynamic> json) =>
       ListMessageFileData(
-        createdAt: json["created_at"] ?? 0,
-        messageId: json["message_id"] ?? '',
-        id: json["id"] ?? '',
-        object: json["object"] ?? '',
+        createdAt: json["created_at"] as int? ?? 0,
+        messageId: json["message_id"] as String? ?? '',
+        id: json["id"] as String? ?? '',
+        object: json["object"] as String? ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "created_at": createdAt,
-        "message_id": messageId,
-        "id": id,
-        "object": object,
-      };
+    "created_at": createdAt,
+    "message_id": messageId,
+    "id": id,
+    "object": object,
+  };
 }

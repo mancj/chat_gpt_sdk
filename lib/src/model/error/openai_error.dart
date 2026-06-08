@@ -7,7 +7,11 @@ class OpenAIError {
   factory OpenAIError.fromJson(Map<String, dynamic>? json, String message) =>
       OpenAIError(
         message: message,
-        error: ErrorData.fromJson(json?['error']),
+        error: ErrorData.fromJson(
+          json?['error'] == null
+              ? null
+              : Map<String, dynamic>.from(json!['error']),
+        ),
       );
 }
 
@@ -24,9 +28,9 @@ class ErrorData {
     }
 
     return ErrorData(
-      message: json['message'],
-      code: json['code'],
-      type: json['type'],
+      message: json['message'] as String?,
+      code: json['code'] as String?,
+      type: json['type'] as String?,
     );
   }
 

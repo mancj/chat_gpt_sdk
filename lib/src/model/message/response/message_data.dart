@@ -26,34 +26,37 @@ class MessageData {
   String runId;
 
   factory MessageData.fromJson(Map<String, dynamic> json) => MessageData(
-        threadId: json["thread_id"] ?? '',
-        metadata: json["metadata"] == null ? null : json["metadata"],
-        role: json["role"] ?? '',
+        threadId: json["thread_id"] as String? ?? '',
+        metadata: json["metadata"] == null
+            ? null
+            : Map<String, dynamic>.from(json["metadata"]),
+        role: json["role"] as String? ?? '',
         fileIds: json["file_ids"] == null
             ? []
-            : List<String>.from(json["file_ids"].map((x) => x)),
-        createdAt: json["created_at"] ?? 0,
-        id: json["id"] ?? '',
+            : (json["file_ids"] as List? ?? []).map((x) => x.toString()).toList(),
+        createdAt: json["created_at"] as int? ?? 0,
+        id: json["id"] as String? ?? '',
         content: json["content"] == null
             ? []
             : List<Content>.from(
-                json["content"].map((x) => Content.fromJson(x)),
+                (json["content"] as List? ?? [])
+                    .map((x) => Content.fromJson(Map<String, dynamic>.from(x))),
               ),
-        object: json["object"] ?? '',
-        assistantId: json['assistant_id'] ?? '',
-        runId: json['run_id'] ?? '',
+        object: json["object"] as String? ?? '',
+        assistantId: json['assistant_id'] as String? ?? '',
+        runId: json['run_id'] as String? ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "thread_id": threadId,
-        "metadata": metadata,
-        "role": role,
-        "file_ids": fileIds.map((x) => x).toList(),
-        "created_at": createdAt,
-        "id": id,
-        "content": content.map((x) => x.toJson()).toList(),
-        "object": object,
-        'assistant_id': assistantId,
-        'run_id': runId,
-      };
+    "thread_id": threadId,
+    "metadata": metadata,
+    "role": role,
+    "file_ids": fileIds.map((x) => x).toList(),
+    "created_at": createdAt,
+    "id": id,
+    "content": content.map((x) => x.toJson()).toList(),
+    "object": object,
+    'assistant_id': assistantId,
+    'run_id': runId,
+  };
 }

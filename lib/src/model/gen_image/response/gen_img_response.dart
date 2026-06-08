@@ -1,27 +1,27 @@
 import 'package:chat_gpt_sdk/src/model/gen_image/response/image_data.dart';
 
 class GenImgResponse {
-  GenImgResponse({
-    this.created,
-    this.data,
-  });
+  GenImgResponse({this.created, this.data});
 
   int? created;
   List<ImageData?>? data;
   final String conversionId = "${DateTime.now().millisecondsSinceEpoch}";
 
   factory GenImgResponse.fromJson(Map<String, dynamic> json) => GenImgResponse(
-        created: json["created"],
+        created: json["created"] as int?,
         data: json["data"] == null
             ? []
             : List<ImageData?>.from(
-                json["data"]!.map((x) => ImageData.fromJson(x)),
+                (json["data"] as List? ?? []).map(
+                  (x) => x == null
+                      ? null
+                      : ImageData.fromJson(Map<String, dynamic>.from(x)),
+                ),
               ),
       );
 
   Map<String, dynamic> toJson() => {
-        "created": created,
-        "data":
-            data == null ? [] : List<Map>.from(data!.map((x) => x!.toJson())),
-      };
+    "created": created,
+    "data": data == null ? [] : List<Map>.from(data!.map((x) => x!.toJson())),
+  };
 }

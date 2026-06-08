@@ -1,7 +1,7 @@
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:test/test.dart';
 
-main() {
+void main() {
   test('default value', () {
     final target = GenerateImage(
       'test',
@@ -57,30 +57,32 @@ main() {
 
   group('GeneratedImageSize', () {
     test('normal', () {
+      expect(GenerateImage('test', 2, model: DallE3()).size?.size, '1024x1024');
       expect(
         GenerateImage(
           'test',
           2,
           model: DallE3(),
+          size: ImageSize.size256,
         ).size?.size,
-        '1024x1024',
-      );
-      expect(
-        GenerateImage('test', 2, model: DallE3(), size: ImageSize.size256)
-            .size
-            ?.size,
         '256x256',
       );
       expect(
-        GenerateImage('test', 2, model: DallE3(), size: ImageSize.size512)
-            .size
-            ?.size,
+        GenerateImage(
+          'test',
+          2,
+          model: DallE3(),
+          size: ImageSize.size512,
+        ).size?.size,
         '512x512',
       );
       expect(
-        GenerateImage('test', 2, model: DallE3(), size: ImageSize.size1024)
-            .size
-            ?.size,
+        GenerateImage(
+          'test',
+          2,
+          model: DallE3(),
+          size: ImageSize.size1024,
+        ).size?.size,
         '1024x1024',
       );
     });
